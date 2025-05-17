@@ -43,14 +43,12 @@ def get_bids_for_hand():
     
     def collect_bid(index):
         if index >= len(play_order):
-            # All bids collected, start the game
             root.after(300, start_turn)
             return
             
         player = play_order[index]
         
         if player == "Player":
-            # Player's turn to bid
             bid_window = Toplevel(root)
             bid_window.title("Enter Your Bid")
             bid_window.geometry("300x150")
@@ -88,7 +86,7 @@ def get_bids_for_hand():
                 trumpBidCount = [card for card in npc_hand if card.split('_')[-1] == trumpSuit and get_card_value(card) >= 11]
                 highCardCount = [card for card in npc_hand if card.split('_')[-1] != trumpSuit and get_card_value(card) >= 13]
                 bid = len(trumpBidCount) + len(highCardCount)
-            elif numCards >= 5 and sum(playerBids.values()) > numCards:
+            elif numCards >= 5 and sum(playerBids.values()) >= numCards:
                 trumpBidCount = [card for card in npc_hand if card.split('_')[-1] == trumpSuit and get_card_value(card) >= 12]
                 highCardCount = [card for card in npc_hand if card.split('_')[-1] != trumpSuit and get_card_value(card) >= 14]
                 bid = len(trumpBidCount) + len(highCardCount)
@@ -96,7 +94,7 @@ def get_bids_for_hand():
                 trumpBidCount = [card for card in npc_hand if card.split('_')[-1] == trumpSuit and get_card_value(card) >= 10]
                 highCardCount = [card for card in npc_hand if card.split('_')[-1] != trumpSuit and get_card_value(card) >= 12]
                 bid = len(trumpBidCount) + len(highCardCount)
-            elif numCards == 4 and sum(playerBids.values()) > numCards:
+            elif numCards == 4 and sum(playerBids.values()) >= numCards:
                 trumpBidCount = [card for card in npc_hand if card.split('_')[-1] == trumpSuit and get_card_value(card) >= 12]
                 highCardCount = [card for card in npc_hand if card.split('_')[-1] != trumpSuit and get_card_value(card) >= 14]
                 bid = len(trumpBidCount) + len(highCardCount)
@@ -104,7 +102,7 @@ def get_bids_for_hand():
                 trumpBidCount = [card for card in npc_hand if card.split('_')[-1] == trumpSuit and get_card_value(card) >= 7]
                 highCardCount = [card for card in npc_hand if card.split('_')[-1] != trumpSuit and get_card_value(card) >= 11]
                 bid = len(trumpBidCount) + len(highCardCount)
-            elif numCards == 3 and sum(playerBids.values()) > numCards:
+            elif numCards == 3 and sum(playerBids.values()) >= numCards:
                 trumpBidCount = [card for card in npc_hand if card.split('_')[-1] == trumpSuit and get_card_value(card) >= 10]
                 highCardCount = [card for card in npc_hand if card.split('_')[-1] != trumpSuit and get_card_value(card) >= 12]
                 bid = len(trumpBidCount) + len(highCardCount)
@@ -112,7 +110,7 @@ def get_bids_for_hand():
                 trumpBidCount = [card for card in npc_hand if card.split('_')[-1] == trumpSuit]
                 highCardCount = [card for card in npc_hand if card.split('_')[-1] != trumpSuit and get_card_value(card) >= 11]
                 bid = len(trumpBidCount) + len(highCardCount)
-            elif numCards == 2 and sum(playerBids.values()) > numCards:
+            elif numCards == 2 and sum(playerBids.values()) >= numCards:
                 trumpBidCount = [card for card in npc_hand if card.split('_')[-1] == trumpSuit and get_card_value(card) >= 7]
                 highCardCount = [card for card in npc_hand if card.split('_')[-1] != trumpSuit and get_card_value(card) >= 12]
                 bid = len(trumpBidCount) + len(highCardCount)
@@ -127,7 +125,6 @@ def get_bids_for_hand():
                     bid = 0
             
             if index == len(play_order) - 1:
-                originalBid = bid
                 total = sum(playerBids.values()) + bid
                 if total == numCards:
                     if bid == 0:
@@ -139,30 +136,25 @@ def get_bids_for_hand():
             chart_cells[numRound][player]['bid'].config(text=str(bid))
             root.after(1000, lambda: collect_bid(index + 1))
     
-    # Start collecting bids from the first player
     collect_bid(0)
 
-chart_width = 0.49  # 1.75 times original width
-chart_height = 0.35  # 1.25 times original height
+chart_width = 0.49 
+chart_height = 0.35 
 
-# Calculate centered position
 chart_frame = Frame(root, bg="white", bd=2, relief="groove")
-chart_frame.place(relx=(1 - chart_width)/2,  # Perfect horizontal center
-                 rely=0.65,  # Slightly lower than vertical center
+chart_frame.place(relx=(1 - chart_width)/2,  
+                 rely=0.65, 
                  relwidth=chart_width, 
                  relheight=chart_height)
 
-# Chart headers with centered alignment
 headers = ["Hand"] 
 for player in playerNames:
     player_header = Frame(chart_frame, bg="lightgray")
     player_header.grid(row=0, column=len(headers), columnspan=3, sticky="nsew")
     
-    # Centered player name
     Label(player_header, text=player, bg="lightgray", font=("Helvetica", 9, "bold"), 
          anchor="center").pack(fill=BOTH, expand=True)
     
-    # Centered sub-headers
     sub_header = Frame(player_header, bg="lightgray")
     sub_header.pack(fill=BOTH, expand=True)
     Label(sub_header, text="Bid", width=5, bg="lightgray", font=("Helvetica", 8), 
@@ -174,9 +166,8 @@ for player in playerNames:
     
     headers.extend([f"{player}_bid", f"{player}_got", f"{player}_pts"])
 
-# Create centered chart cells
 chart_cells = {}
-hand_numbers = list(range(8, 0, -1)) + list(range(2, 9))  # 15 hands total
+hand_numbers = list(range(8, 0, -1)) + list(range(2, 9)) 
 
 for row in range(1, 16):
     hand_num = hand_numbers[row-1] if (row-1) < len(hand_numbers) else ""
@@ -188,7 +179,6 @@ for row in range(1, 16):
         player_frame = Frame(chart_frame)
         player_frame.grid(row=row, column=1+(col-1)*3, columnspan=3, sticky="nsew")
         
-        # Centered content in cells
         bid_cell = Label(player_frame, text="", bg="white", font=("Helvetica", 8), 
                         width=5, relief="ridge", anchor="center")
         got_cell = Label(player_frame, text="", bg="white", font=("Helvetica", 8), 
@@ -204,7 +194,6 @@ for row in range(1, 16):
             chart_cells[row] = {}
         chart_cells[row][player] = {'bid': bid_cell, 'got': got_cell, 'pts': pts_cell}
 
-# Configure grid weights for centered expansion
 for i in range(16):
     chart_frame.rowconfigure(i, weight=1, uniform="chart_rows")
     
@@ -233,10 +222,8 @@ def onClick(event):
     played_suit = card_name.split('_')[-1]
 
     if trick_play_count > 0 and leadSuit:
-        # Get all suits in player's remaining hand
         player_suits = [c.split('_')[-1] for c in player]
         
-        # Check if player has lead suit but didn't play it
         if leadSuit in player_suits and played_suit != leadSuit:
             messagebox.showwarning(
                 "Invalid Play", 
@@ -255,7 +242,6 @@ def onClick(event):
     player.pop(card_index)
     player_cards.pop(card_index)
 
-    # After player plays, continue with NPC turns
     turn_index = (turn_index + 1) % 6
     root.after(3000, play_next_card)
 
@@ -267,63 +253,38 @@ def onClick(event):
     if trick_play_count == 6:
         root.after(1000, clear_trick)
 
-# def play_next_card():
-#     global turn_index
-    
-#     if turn_index >= len(play_order):
-#         return
-        
-#     current_player = play_order[turn_index]
-    
-#     if current_player == "Player":
-#         # Wait for player to click (handled by onClick)
-#         return
-#     else:
-#         play_npc_card(current_player)
-#         turn_index = (turn_index + 1) % 6
-#         # Schedule next play after a short delay
-#         root.after(3000, play_next_card)
-
 def play_next_card():
-    global turn_index, current_turn_handler
+    global turn_index, current_turn_handler, trick_play_count
     
-    # Clear any pending turns
     if current_turn_handler:
         root.after_cancel(current_turn_handler)
         current_turn_handler = None
     
-    if turn_index >= len(play_order):
+    if trick_play_count >= 6:
+        clear_trick()
         return
         
     current_player = play_order[turn_index]
     
     if current_player == "Player":
-        # Wait for player to click (handled by onClick)
         return
     else:
-        # Highlight current NPC
         idx = playerNames.index(current_player) - 1
         trick_labels[idx+1].config(bg='yellow')
         root.update()
         
-        # Play card after short delay
-        current_turn_handler = root.after(500, lambda: complete_npc_turn(current_player))
+        current_turn_handler = root.after(1000, lambda: complete_npc_turn(current_player))
 
 def complete_npc_turn(npc_name):
-    global turn_index, current_turn_handler
+    global turn_index, current_turn_handler, trick_play_count
     
-    # Play the card
     play_npc_card(npc_name)
     
-    # Remove highlight
     idx = playerNames.index(npc_name) - 1
     trick_labels[idx+1].config(bg='green')
     
-    # Move to next player
-    turn_index = (turn_index + 1) % 6
-    
-    # Only schedule next turn if we haven't completed the trick
     if trick_play_count < 6:
+        turn_index = (turn_index + 1) % 6
         current_turn_handler = root.after(1000, play_next_card)
     else:
         current_turn_handler = root.after(1000, clear_trick)
@@ -351,6 +312,7 @@ def play_npc_card(npc_name):
 
         matching_cards = [c for c in current_hand if c.split('_')[-1] == leadSuit]
         trump_cards = [c for c in current_hand if c.split('_')[-1] == trumpSuit]
+        playerNonTrump = [card for card in current_hand if card not in trump_cards]
         played_trumps = [card for (_, card) in playedCards if card.split('_')[-1] == trumpSuit]
         played_lead = [card for (_, card) in playedCards if card.split('_')[-1] == leadSuit]
 
@@ -360,11 +322,17 @@ def play_npc_card(npc_name):
 
         card = None
 
-        if matching_cards and played_lead:
+        if len(playedCards) == 0:
+            if sum(playerBids.values()) > numCards and needs_tricks:
+                card = max(current_hand, key=get_card_value) if needs_tricks else min(current_hand, key=get_card_value)
+            else:
+                card = min(current_hand, key=get_card_value)
+
+        elif matching_cards: 
             best_own = max(matching_cards, key=get_card_value)
             best_played = max(played_lead, key=get_card_value)
 
-            if get_card_value(best_own) > get_card_value(best_played) and needs_tricks:
+            if get_card_value(best_own) > get_card_value(best_played) and needs_tricks and not played_trumps:
                 card = best_own
             elif needs_tricks:
                 card = min(matching_cards, key=get_card_value)
@@ -377,17 +345,17 @@ def play_npc_card(npc_name):
                     card = min(trump_cards, key=get_card_value)
                 elif trump_cards and played_trumps:
                     if get_card_value(max(played_trumps, key=get_card_value)) > get_card_value(max(trump_cards, key=get_card_value)):
-                        card = min(current_hand, key=get_card_value)
+                        card = min(playerNonTrump, key=get_card_value)
                     else:
                         card = max(trump_cards, key=get_card_value)
                 else:
                     card = min(current_hand, key=get_card_value)
             else:
-                card = min(current_hand, key=get_card_value)
+                card = min(playerNonTrump, key=get_card_value)
 
         if not card:
             card = random.choice(current_hand)
-
+        
         if trick_play_count == 0:
             leadSuit = card.split('_')[-1]
 
@@ -399,16 +367,12 @@ def play_npc_card(npc_name):
 
         trick_play_count += 1
 
-        # if trick_play_count == 6:
-        #     root.after(1000, clear_trick)
-
 def takeTricks():
     global playedCards, trumpSuit, leadSuit, tricksTaken
     
-    if not playedCards:  # No cards played
+    if not playedCards:
         return None
     
-    # Find winning card (same logic as before)
     trump_cards = []
     lead_cards = []
     
@@ -421,18 +385,15 @@ def takeTricks():
         if suit == leadSuit:
             lead_cards.append((value, player))
     
-    # Determine winner
     if trump_cards:
-        winner = max(trump_cards)[1]  # Player with highest trump
+        winner = max(trump_cards)[1]
     elif lead_cards:
-        winner = max(lead_cards)[1]  # Player with highest lead suit
+        winner = max(lead_cards)[1]
     else:
         winner = None
     
-    # Update tricks taken count
     if winner:
         tricksTaken[winner] = tricksTaken.get(winner, 0) + 1
-        # Update chart
         chart_cells[numRound][winner]['got'].config(text=str(tricksTaken[winner]))
     
     return winner
@@ -451,11 +412,9 @@ def clear_trick():
         lbl.config(image='')
         lbl.image = None
 
-    # Reset the counter and played cards
     trick_play_count = 0
     playedCards = []
 
-    # Destroy display frame if it exists
     if display_frame:
         display_frame.destroy()
         display_frame = None
@@ -463,7 +422,7 @@ def clear_trick():
     if not player:  
         scoreHand()
         root.after(2000, shuffleCards)
-    else:  # Start next trick
+    else:
         root.after(1000, play_next_card)
 
 def scoreHand():
@@ -527,16 +486,12 @@ def start_turn():
     play_next_card()
    
 my_frame = Frame(root, bg="green")
-# my_frame.pack(pady=0)
 
 trick_frame = Frame(root, bg="green")
-# trick_frame.pack(pady=(0, 0))
 
 cards_frame = Frame(root, bg="green")
-# cards_frame.pack(pady=(0, 0))
 
 trump_frame = Frame(root, bg="green")
-# trump_frame.pack(side="left", anchor="sw", padx=10, pady=10)
 
 my_frame.pack_forget()
 trick_frame.pack_forget()
@@ -635,9 +590,7 @@ def shuffleCards():
         )
 
     trumpSuit = trump_card.split('_')[-1]  
-    # print(f"Trump suit is: {trumpSuit}")
-
-    # startingPosition = (startingPosition + 1) % 6
+ 
     all_players = ["Player", "NPC 1", "NPC 2", "NPC 3", "NPC 4", "NPC 5"]
     play_order = all_players[startingPosition:] + all_players[:startingPosition]
 
@@ -736,13 +689,16 @@ def select_start_card(event, selected_card):
             "", 
             f"There was a tie you must redraw"
         )
+        remaining_cards = [c for c in full_deck if c not in npc_start_cards]
+        if not remaining_cards:  
+            remaining_cards = full_deck.copy()
+        selected_card = random.choice(remaining_cards)
 
     else:
         min_index = startCardsValues.index(min_val)
-        startingPosition = (min_index + 1) % 6  # player after lowest card
+        startingPosition = (min_index + 1) % 6 
         print(f"Starting position is player {startingPosition}")
-
-    # Set the play order starting from the correct player
+        
     global play_order
     all_players = ["Player", "NPC 1", "NPC 2", "NPC 3", "NPC 4", "NPC 5"]
     play_order = all_players[startingPosition:] + all_players[:startingPosition]
