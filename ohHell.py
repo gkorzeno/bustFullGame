@@ -351,8 +351,11 @@ def play_npc_card(npc_name):
                 else:
                     card = min(current_hand, key=get_card_value)
             else:
-                card = min(playerNonTrump, key=get_card_value)
-
+                if playerNonTrump:
+                    card = max(playerNonTrump, key=get_card_value)
+                else:
+                    card = min(current_hand, key=get_card_value)
+                
         if not card:
             card = random.choice(current_hand)
         
